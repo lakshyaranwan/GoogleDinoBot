@@ -2,10 +2,9 @@ from PIL import ImageGrab, ImageOps
 import pyautogui
 import time
 from numpy import *
-import random as rm
+
 
 class cordinates:
-    #the coordinates of the replay button of the game, depending on your screen size
     replayBtn = (360,240)
 
 def restartGame():
@@ -17,8 +16,6 @@ def jump():
     pyautogui.keyUp('space')
 
 def imageGrab(x1,y1,x2,y2):
-    #the coordinates of a square in front of the dino, when a tree enters the box, the dino jumps
-    #x1,y1 top left corner ; x2,y2 bottom right corner
     box = (x1,y1,x2,y2)
     image = ImageGrab.grab(box)
     greyImage = ImageOps.grayscale(image)
@@ -34,34 +31,30 @@ def imageShow(x1,y1,x2,y2):
 decrease = 50
 restartGame()
 x2 = 245
-count = 0
+dist = 0
+bestRun = 0
 while True:
     if(imageGrab(345,230,375,250)==930):
-        #changing x2 (right edge of box infront of dino) as game progesses to keep up with speed and react faster
-        # increase rate = x2+1/decrease
         x2=245
         print("----------------------------------Decrease:")
         print(decrease)
         print("----------------------------------Dist:")
-        print(count)
+        print(dist)
+        if(dist>bestRun):
+            max = decrease
+            bestRun = dist
+        print("----------------------------------Best Reduce:")
+        print(max)
         count = 0
-        decrease = rm.randint(50,1000)
+        decrease = decrease+1
         restartGame()
     else:
-        count = count+1
+        dist = dist+10
         x2 = x2+(1/decrease)
         print(x2)
         jumpValue = imageGrab(150, 150, x2, 182)
         if(imageGrab(150,242,x2,274)!=jumpValue):
-            #imageGrab() is the value of the sum of the pixels greyscale values of the box when there is no tree
-            #jumpValue = value of sum of pixels of background day or night, taken from top left corner of game, dimensions similiar to imageGrab or else it will keep jumping
             jump()
-        if(jumpValue<3000):
-            print(jumpValue)
-            print("FINAL VALUE : ")
-            print(decrease)
-            break
-
 
 
 
